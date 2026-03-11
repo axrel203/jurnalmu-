@@ -53,7 +53,7 @@ export default function PublicJournalView() {
             <article className="max-w-3xl mx-auto card p-8 sm:p-12 animate-fade-in shadow-2xl">
                 <header className="mb-8 border-b border-[var(--border)] pb-8 text-center">
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold mb-6 shadow-sm border" style={{ backgroundColor: `var(--${mood.value}-bg)`, color: `var(--${mood.value}-text)` }}>
-                        {mood.emoji} {mood.label}
+                        {mood.emoji}
                     </div>
                     <h1 className="text-3xl sm:text-5xl font-extrabold mb-6 leading-tight">{journal.title}</h1>
 

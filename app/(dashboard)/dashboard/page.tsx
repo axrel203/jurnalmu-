@@ -118,7 +118,7 @@ export default function DashboardPage() {
                                 onClick={() => setMoodFilter(mood.value === moodFilter ? '' : mood.value)}
                                 className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-all flex items-center gap-1.5 ${moodFilter === mood.value ? `${mood.bg} ${mood.border} ${mood.color}` : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--text-secondary)]/30'}`}
                             >
-                                {mood.emoji} {mood.label}
+                                {mood.emoji}
                             </button>
                         ))}
                     </div>
