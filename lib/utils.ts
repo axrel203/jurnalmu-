@@ -9,10 +9,26 @@ export const MOODS = [
     { value: 'anxious', label: 'Cemas', emoji: '😰', color: 'text-purple-400', bg: 'bg-purple-400/20', border: 'border-purple-400/50' },
     { value: 'grateful', label: 'Bersyukur', emoji: '🙏', color: 'text-green-400', bg: 'bg-green-400/20', border: 'border-green-400/50' },
     { value: 'tired', label: 'Lelah', emoji: '😴', color: 'text-gray-400', bg: 'bg-gray-400/20', border: 'border-gray-400/50' },
+    { value: 'love', label: 'Cinta', emoji: '🥰', color: 'text-pink-400', bg: 'bg-pink-400/20', border: 'border-pink-400/50' },
 ]
 
 export function getMoodInfo(moodValue: string) {
-    return MOODS.find(m => m.value === moodValue) || MOODS[2]
+    const mood = MOODS.find(m => m.value === moodValue)
+    if (mood) return mood
+
+    // Jika moodValue bukan dari list predefined, tapi berisi emoji/teks custom
+    if (moodValue && moodValue !== 'neutral') {
+        return {
+            value: moodValue,
+            label: 'Perasaan',
+            emoji: moodValue,
+            color: 'text-pink-400',
+            bg: 'bg-pink-400/20',
+            border: 'border-pink-400/50'
+        }
+    }
+
+    return MOODS[2] // Default: Neutral
 }
 
 export function formatDate(date: string | Date) {
