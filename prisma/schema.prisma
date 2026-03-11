@@ -16,7 +16,6 @@ model User {
   email     String    @unique
   password  String
   pin       String?
-  role      String    @default("USER")
   journals  Journal[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
