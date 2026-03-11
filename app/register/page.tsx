@@ -56,7 +56,7 @@ export default function RegisterPage() {
                                 <input
                                     className="input !pl-10"
                                     type="text"
-                                    placeholder="Budi Santoso"
+                                    placeholder="(contoh:cantikku🤗)"
                                     required
                                     value={form.name}
                                     onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
