@@ -96,8 +96,19 @@ export default function StatsPage() {
                                 </PieChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="h-full flex items-center justify-center text-[var(--text-secondary)] text-sm">
-                                Belum ada data untuk ditampilkan
+                            <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
+                                <div className="w-32 h-32 opacity-80 animate-bounce-slow">
+                                    <img
+                                        src="/hello_kitty_mascot.png"
+                                        alt="Cari Inspirasi"
+                                        className="w-full h-full object-contain"
+                                    />
+                                </div>
+                                <div>
+                                    <p className="text-[var(--text-secondary)] font-medium">Belum ada mood tercatat</p>
+                                    <p className="text-xs text-[var(--text-secondary)]/60 mt-1">Ayo tulis jurnal pertama kamu hari ini! 🎀</p>
+                                </div>
+                                <a href="/journal/new" className="btn-primary !py-2 !px-4 text-xs">Mulai Menulis ✨</a>
                             </div>
                         )}
                     </div>
@@ -115,22 +126,37 @@ export default function StatsPage() {
                 <div className="card p-6">
                     <h3 className="font-semibold mb-6">Aktivitas Mingguan</h3>
                     <div className="h-[300px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={data.weeklyData}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.5} />
-                                <XAxis
-                                    dataKey="day"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
-                                />
-                                <Tooltip
-                                    cursor={{ fill: 'var(--card-hover)', opacity: 0.4 }}
-                                    contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', borderRadius: '12px' }}
-                                />
-                                <Bar dataKey="count" fill="var(--primary-500)" radius={[4, 4, 0, 0]} barSize={32} />
-                            </BarChart>
-                        </ResponsiveContainer>
+                        {data.weeklyData.some(d => d.count > 0) ? (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={data.weeklyData}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.5} />
+                                    <XAxis
+                                        dataKey="day"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
+                                    />
+                                    <Tooltip
+                                        cursor={{ fill: 'var(--card-hover)', opacity: 0.4 }}
+                                        contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', borderRadius: '12px' }}
+                                    />
+                                    <Bar dataKey="count" fill="var(--primary-500)" radius={[4, 4, 0, 0]} barSize={32} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        ) : (
+                            <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
+                                <div className="w-28 h-28 opacity-60">
+                                    <img
+                                        src="/hello_kitty_stickers_set_2.png"
+                                        alt="Activity"
+                                        className="w-full h-full object-contain grayscale-[20%]"
+                                    />
+                                </div>
+                                <p className="text-xs text-[var(--text-secondary)]/60 max-w-[200px]">
+                                    Grafik mingguan akan muncul setelah kamu mulai rutin menulis jurnal! ✍️✨
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

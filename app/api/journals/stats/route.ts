@@ -35,21 +35,32 @@ export async function GET() {
     }
 
     // Weekly mood data
-    const weeklyData: { date: string; count: number }[] = []
+    const weeklyData: { day: string; count: number }[] = []
     for (let i = 6; i >= 0; i--) {
         const d = new Date()
         d.setDate(d.getDate() - i)
         const dateStr = d.toDateString()
         weeklyData.push({
-            date: d.toLocaleDateString('en-US', { weekday: 'short' }),
+            day: d.toLocaleDateString('en-US', { weekday: 'short' }),
             count: sortedDates.filter(s => s === dateStr).length,
         })
     }
 
+    // Top mood calculation
+    let topMood = 'neutral'
+    let maxCount = 0
+    Object.entries(moodCounts).forEach(([mood, count]) => {
+        if (count > maxCount) {
+            maxCount = count
+            topMood = mood
+        }
+    })
+
     return NextResponse.json({
-        total: journals.length,
+        totalEntries: journals.length,
         moodCounts,
         streak,
         weeklyData,
+        topMood
     })
 }
