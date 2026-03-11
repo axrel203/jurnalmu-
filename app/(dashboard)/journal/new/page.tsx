@@ -69,23 +69,23 @@ export default function NewJournalPage() {
                     />
                 </div>
 
-                {/* Mood Selector */}
+                {/* Mood Selector (Custom) */}
                 <div className="card p-5">
-                    <p className="label mb-3">Bagaimana perasaan Anda?</p>
-                    <div className="flex flex-wrap gap-2">
-                        {MOODS.map(mood => (
-                            <button
-                                key={mood.value}
-                                type="button"
-                                onClick={() => setForm(f => ({ ...f, mood: mood.value }))}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold border-2 transition-all ${form.mood === mood.value
-                                    ? `${mood.bg} ${mood.color} ${mood.border} scale-105 shadow-md`
-                                    : 'border-transparent text-[var(--text-secondary)] hover:border-[var(--border)] hover:text-[var(--text-primary)]'
-                                    }`}
-                            >
-                                <span className="text-lg">{mood.emoji}</span> {mood.label}
-                            </button>
-                        ))}
+                    <p className="label mb-3">Emoji Perasaan Anda</p>
+                    <div className="flex items-center gap-3">
+                        <input
+                            type="text"
+                            className="text-4xl w-16 h-16 text-center bg-transparent border-2 border-[var(--border)] rounded-xl focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-400/20 transition-all"
+                            placeholder="😊"
+                            maxLength={2}
+                            value={form.mood === 'neutral' ? '' : form.mood}
+                            onChange={e => {
+                                // Only allow emojis or text, keep it short
+                                const val = e.target.value;
+                                setForm(f => ({ ...f, mood: val || 'neutral' }))
+                            }}
+                        />
+                        <span className="text-sm text-[var(--text-secondary)]">Ketik emoji dari keyboard Anda (contoh: 😻, 😭, 🚀)</span>
                     </div>
                 </div>
 
@@ -113,16 +113,6 @@ export default function NewJournalPage() {
 
                 {/* Options */}
                 <div className="card p-5 flex flex-wrap gap-4">
-                    <label className="flex items-center gap-2.5 cursor-pointer group">
-                        <div
-                            onClick={() => setForm(f => ({ ...f, isPublic: !f.isPublic }))}
-                            className={`w-11 h-6 rounded-full transition-all relative ${form.isPublic ? 'bg-green-500' : 'bg-[var(--border)]'}`}
-                        >
-                            <div className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all ${form.isPublic ? 'left-6' : 'left-1'}`} />
-                        </div>
-                        <span className="text-pink-400">🌍</span>
-                        <span className="text-sm font-medium">Buat Publik</span>
-                    </label>
 
                     <label className="flex items-center gap-2.5 cursor-pointer group">
                         <div

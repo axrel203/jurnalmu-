@@ -72,18 +72,20 @@ export default function EditJournalPage() {
                 </div>
 
                 <div className="card p-5">
-                    <p className="label mb-3">Mood</p>
-                    <div className="flex flex-wrap gap-2">
-                        {MOODS.map(mood => (
-                            <button key={mood.value} type="button"
-                                onClick={() => setForm(f => ({ ...f, mood: mood.value }))}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold border-2 transition-all ${form.mood === mood.value
-                                        ? `${mood.bg} ${mood.color} ${mood.border} scale-105 shadow-md`
-                                        : 'border-transparent text-[var(--text-secondary)] hover:border-[var(--border)]'}`}
-                            >
-                                <span className="text-lg">{mood.emoji}</span> {mood.label}
-                            </button>
-                        ))}
+                    <p className="label mb-3">Emoji Perasaan Anda</p>
+                    <div className="flex items-center gap-3">
+                        <input
+                            type="text"
+                            className="text-4xl w-16 h-16 text-center bg-transparent border-2 border-[var(--border)] rounded-xl focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-400/20 transition-all"
+                            placeholder="😊"
+                            maxLength={2}
+                            value={form.mood === 'neutral' ? '' : form.mood}
+                            onChange={e => {
+                                const val = e.target.value;
+                                setForm(f => ({ ...f, mood: val || 'neutral' }))
+                            }}
+                        />
+                        <span className="text-sm text-[var(--text-secondary)]">Ketik emoji dari keyboard Anda</span>
                     </div>
                 </div>
 
@@ -104,7 +106,6 @@ export default function EditJournalPage() {
 
                 <div className="card p-5 flex flex-wrap gap-6">
                     {[
-                        { key: 'isPublic', label: 'Publik', color: 'bg-green-500' },
                         { key: 'isPinLocked', label: 'Kunci PIN', color: 'bg-amber-500' },
                     ].map(({ key, label, color }) => (
                         <label key={key} className="flex items-center gap-2.5 cursor-pointer">
