@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -10,10 +10,25 @@ export default function LoginPage() {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [showPw, setShowPw] = useState(false)
+    const [rememberMe, setRememberMe] = useState(false)
     const [form, setForm] = useState({ email: '', password: '' })
+
+    // Load saved email on mount
+    useEffect(() => {
+        const savedEmail = localStorage.getItem('remembered_email')
+        if (savedEmail) {
+            setForm(f => ({ ...f, email: savedEmail }))
+            setRememberMe(true)
+        }
+    }, [])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        if (rememberMe) {
+            localStorage.setItem('remembered_email', form.email)
+        } else {
+            localStorage.removeItem('remembered_email')
+        }
         setLoading(true)
         const res = await signIn('credentials', {
             email: form.email,
@@ -81,6 +96,26 @@ export default function LoginPage() {
                                 </button>
                             </div>
                         </div>
+
+                        {/* Remember Me */}
+                        <label className="flex items-center gap-2.5 cursor-pointer group select-none">
+                            <div
+                                onClick={() => setRememberMe(v => !v)}
+                                className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${rememberMe
+                                    ? 'bg-primary-500 border-primary-500'
+                                    : 'border-[var(--border)] group-hover:border-primary-400'
+                                    }`}
+                            >
+                                {rememberMe && (
+                                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                )}
+                            </div>
+                            <span className="text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
+                                Ingat email saya
+                            </span>
+                        </label>
 
                         <button type="submit" className="btn-primary w-full flex items-center justify-center gap-2" disabled={loading}>
                             {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Sedang masuk...</> : 'Masuk'}
