@@ -27,11 +27,22 @@ export default function StatsPage() {
 
     if (!data) return null
 
-    const moodChartData = MOODS.map(m => ({
-        name: m.label,
-        value: data.moodCounts[m.value] || 0,
-        color: m.color.includes('yellow') ? '#fbbf24' : m.color.includes('orange') ? '#fb923c' : m.color.includes('blue') ? '#60a5fa' : m.color.includes('indigo') ? '#818cf8' : m.color.includes('red') ? '#f87171' : m.color.includes('purple') ? '#c084fc' : m.color.includes('green') ? '#4ade80' : '#9ca3af'
-    })).filter(d => d.value > 0)
+    const moodChartData = Object.entries(data.moodCounts).map(([moodValue, count]) => {
+        const info = getMoodInfo(moodValue)
+        const color = info.color.includes('yellow') ? '#fbbf24' :
+            info.color.includes('orange') ? '#fb923c' :
+                info.color.includes('blue') ? '#60a5fa' :
+                    info.color.includes('indigo') ? '#818cf8' :
+                        info.color.includes('red') ? '#f87171' :
+                            info.color.includes('purple') ? '#c084fc' :
+                                info.color.includes('green') ? '#4ade80' :
+                                    info.color.includes('pink') ? '#ec4899' : '#9ca3af'
+        return {
+            name: info.label === 'Perasaan' ? moodValue : info.label,
+            value: count,
+            color
+        }
+    }).filter(d => d.value > 0)
 
     const topMoodInfo = getMoodInfo(data.topMood || 'neutral')
 

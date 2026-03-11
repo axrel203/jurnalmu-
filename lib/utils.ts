@@ -18,9 +18,10 @@ export function getMoodInfo(moodValue: string) {
 
     // Jika moodValue bukan dari list predefined, tapi berisi emoji/teks custom
     if (moodValue && moodValue !== 'neutral') {
+        const isEmoji = moodValue.length <= 4;
         return {
             value: moodValue,
-            label: 'Perasaan',
+            label: isEmoji ? 'Mood' : 'Perasaan',
             emoji: moodValue,
             color: 'text-pink-400',
             bg: 'bg-pink-400/20',
