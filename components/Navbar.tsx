@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
-import { BookOpen, LayoutDashboard, BarChart2, Settings, LogOut, Moon, Sun, PenLine, Menu, X, Heart } from 'lucide-react'
+import { BookOpen, LayoutDashboard, BarChart2, Settings, LogOut, PenLine, Menu, X, ShieldAlert } from 'lucide-react'
 import { useTheme } from './ThemeProvider'
 import { useState } from 'react'
 
@@ -56,6 +56,19 @@ export default function Navbar() {
                             {label}
                         </Link>
                     ))}
+                    {/* Admin Panel Link */}
+                    {session?.user?.role === 'ADMIN' && (
+                        <Link
+                            href="/admin"
+                            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${pathname === '/admin'
+                                ? 'bg-purple-500/15 text-purple-500'
+                                : 'text-purple-400/80 hover:text-purple-500 hover:bg-purple-500/10'
+                                }`}
+                        >
+                            <ShieldAlert className="w-4 h-4" />
+                            Admin Panel
+                        </Link>
+                    )}
                 </nav>
 
                 {/* Right Actions */}
@@ -107,6 +120,11 @@ export default function Navbar() {
                     <Link href="/journal/new" onClick={() => setOpen(false)} className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-primary-400">
                         <PenLine className="w-4 h-4" /> Entri Baru
                     </Link>
+                    {session?.user?.role === 'ADMIN' && (
+                        <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-purple-400">
+                            <ShieldAlert className="w-4 h-4" /> Admin Panel
+                        </Link>
+                    )}
                     <button onClick={() => signOut({ callbackUrl: '/' })} className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 w-full text-left">
                         <LogOut className="w-4 h-4" /> Keluar
                     </button>
