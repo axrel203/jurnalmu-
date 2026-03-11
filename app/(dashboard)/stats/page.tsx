@@ -76,7 +76,7 @@ export default function StatsPage() {
                     </div>
                     <div>
                         <p className="text-xs text-[var(--text-secondary)] font-medium uppercase tracking-wider">Mood Terbanyak</p>
-                        <p className="text-2xl font-bold">{topMoodInfo.label}</p>
+                        <p className="text-2xl font-bold">{topMoodInfo.emoji}</p>
                     </div>
                 </div>
             </div>

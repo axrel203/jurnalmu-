@@ -148,7 +148,7 @@ export default function JournalDetailPage() {
                     {/* Meta */}
                     <div className="flex flex-wrap items-center gap-3 mb-5">
                         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-sm font-semibold ${mood.bg} ${mood.color} border ${mood.border}`}>
-                            {mood.emoji} {mood.label}
+                            {mood.emoji}
                         </span>
                         {journal.isPublic && (
                             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium border border-green-500/40 text-green-400 bg-green-400/10">

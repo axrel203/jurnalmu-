@@ -191,7 +191,7 @@ export default function DashboardPage() {
                                         {/* Mood + Date */}
                                         <div className="flex items-center justify-between mb-3">
                                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${mood.bg} ${mood.color} border ${mood.border}`}>
-                                                {mood.emoji} {mood.label}
+                                                {mood.emoji}
                                             </span>
                                             <div className="flex items-center gap-2">
                                                 {journal.isPublic && <span className="text-xs text-green-400 border border-green-400/40 rounded-md px-1.5 py-0.5">Publik</span>}
