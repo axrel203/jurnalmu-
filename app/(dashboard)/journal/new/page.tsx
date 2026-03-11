@@ -70,33 +70,60 @@ export default function NewJournalPage() {
                     />
                 </div>
 
-                {/* Cover Image URL */}
+                {/* Cover Image Upload */}
                 <div className="card p-5 space-y-4">
                     <label className="label flex items-center gap-2">
-                        <span className="text-pink-400">🖼️</span> URL Gambar Sampul (Opsional)
+                        <span className="text-pink-400">🖼️</span> Gambar Sampul (Opsional)
                     </label>
-                    <input
-                        className="input"
-                        placeholder="Tempel link gambar (misal: https://unsplash.com/...)"
-                        value={form.coverImage || ''}
-                        onChange={e => setForm(f => ({ ...f, coverImage: e.target.value }))}
-                    />
-                    {form.coverImage && (
-                        <div className="relative aspect-video rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--bg-secondary)] mb-2 group">
+                    {!form.coverImage ? (
+                        <label className="flex flex-col items-center justify-center w-full aspect-video rounded-xl border-2 border-dashed border-pink-300 bg-pink-50/50 cursor-pointer hover:bg-pink-100/50 transition-colors">
+                            <div className="flex flex-col items-center justify-center py-6">
+                                <span className="text-3xl mb-2">📷</span>
+                                <p className="text-sm font-medium text-pink-500">Pilih dari Galeri</p>
+                                <p className="text-[10px] text-[var(--text-secondary)] mt-1">JPG, PNG, GIF (Maks. 4MB)</p>
+                            </div>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={async (e) => {
+                                    const file = e.target.files?.[0]
+                                    if (!file) return
+                                    if (file.size > 4 * 1024 * 1024) {
+                                        toast.error('Ukuran file maksimal 4MB')
+                                        return
+                                    }
+                                    toast.loading('Mengupload gambar...', { id: 'upload' })
+                                    const fd = new FormData()
+                                    fd.append('file', file)
+                                    const res = await fetch('/api/upload', { method: 'POST', body: fd })
+                                    const data = await res.json()
+                                    toast.dismiss('upload')
+                                    if (res.ok) {
+                                        setForm(f => ({ ...f, coverImage: data.url }))
+                                        toast.success('Gambar berhasil diupload!')
+                                    } else {
+                                        toast.error(data.error || 'Gagal upload gambar')
+                                    }
+                                }}
+                            />
+                        </label>
+                    ) : (
+                        <div className="relative aspect-video rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--bg-secondary)] group">
                             <img
                                 src={form.coverImage}
                                 alt="Cover preview"
                                 className="w-full h-full object-cover"
-                                onError={(e) => {
-                                    (e.target as HTMLImageElement).style.display = 'none';
-                                }}
                             />
-                            <div className="absolute inset-0 flex items-center justify-center text-xs text-[var(--text-secondary)] pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity">
-                                Preview Gambar
-                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setForm(f => ({ ...f, coverImage: '' }))}
+                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm shadow-lg hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                            >
+                                ✕
+                            </button>
                         </div>
                     )}
-                    <p className="text-[10px] text-[var(--text-secondary)] italic">Tips: Kamu bisa ambil link gambar dari Pinterest atau Unsplash!</p>
                 </div>
 
                 {/* Mood Selector (Custom) */}
