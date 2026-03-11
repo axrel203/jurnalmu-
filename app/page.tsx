@@ -121,7 +121,7 @@ export default function LandingPage() {
             <span className="text-6xl text-pink-500">🎀</span>
           </div>
         )}
-        © 2026 DayScript. Developed by <span className="text-pink-600 font-semibold">Rell</span>
+        © 2026 DayScript. Developed by <span className="text-pink-600 font-semibold">Farrel</span>
       </footer>
 
       {theme === 'kitty' && (

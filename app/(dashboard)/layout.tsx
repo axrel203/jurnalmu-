@@ -8,7 +8,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 {children}
             </main>
             <footer className="py-6 text-center text-sm text-[var(--text-secondary)] border-t border-[var(--border)]">
-                © 2026 DayScript · Developed by <span className="text-primary-400 font-semibold">Rell</span>
+                © 2026 DayScript · Developed by <span className="text-primary-400 font-semibold">Farrel</span>
             </footer>
         </div>
     )
