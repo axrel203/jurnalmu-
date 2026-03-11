@@ -1,27 +1,213 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg-primary: #fffbff;
+    --bg-secondary: #fff5fa;
+    --text-primary: #8d1c3a;
+    /* Deep pinkish maroon */
+    --text-secondary: #f06292;
+    --border: #ffdbe9;
+    --card: #ffffff;
+    --card-hover: #fff3f8;
+    --primary-500: #ff69b4;
+    --primary-400: #ffacc5;
+    --selection: #ff80ab33;
+  }
+
+  /* Dark mode variables removed as we are locking to Kitty theme */
+
+  [data-theme="kitty"] {
+    --bg-primary: #fffbff;
+    --bg-secondary: #fff0f6;
+    --text-primary: #8d1c3a;
+    --text-secondary: #f06292;
+    --primary-500: #ff80ab;
+    --primary-400: #ffacc5;
+    --card: #ffffff;
+    --card-hover: #fff3f8;
+    --border: #ffdbe9;
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --selection: #ff80ab33;
+  }
+
+  * {
+    @apply border-[var(--border)];
+  }
+
+  body {
+    @apply bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  ::selection {
+    @apply bg-primary-500/30 text-primary-900 dark:text-primary-100;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary-300/50 dark:bg-primary-700/50 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-400/70 dark:bg-primary-600/70;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .glass {
+    @apply bg-white/80 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10;
+  }
+
+  .card {
+    @apply rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-sm transition-all duration-200;
+  }
+
+  .card-hover {
+    @apply hover:bg-[var(--card-hover)] hover:shadow-md hover:-translate-y-0.5;
+  }
+
+  .btn-primary {
+    @apply px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply px-5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--text-primary)] font-semibold hover:bg-[var(--card-hover)] active:translate-y-0 transition-all duration-200;
+  }
+
+  .btn-danger {
+    @apply px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white font-semibold shadow-lg shadow-red-500/25 hover:shadow-red-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all duration-200;
+  }
+
+  .input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
+  }
+
+  .label {
+    @apply block text-sm font-semibold text-[var(--text-secondary)] mb-1.5;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-pink-400 to-rose-400 bg-clip-text text-transparent;
+  }
+
+  .hero-gradient {
+    background: radial-gradient(ellipse at 60% 0%, rgba(255, 105, 180, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 10% 80%, rgba(255, 182, 193, 0.12) 0%, transparent 50%);
+  }
+
+  [data-theme="kitty"] .hero-gradient {
+    @apply bg-blend-soft-light bg-repeat;
+    background-color: #fff5f8;
+    background-image: radial-gradient(#ff69b4 1.5px, #fff5f8 1.5px);
+    background-size: 30px 30px;
+  }
+
+  [data-theme="kitty"] .card {
+    @apply border-2 border-pink-100 shadow-[0_4px_0_0_#ffd1dc];
+  }
+
+  [data-theme="kitty"] .btn-primary {
+    @apply bg-[#ff69b4] hover:bg-[#ff3399] shadow-[0_4px_0_0_#ff3366];
+  }
+
+  [data-theme="kitty"] .btn-secondary {
+    @apply border-2 border-[#ff99cc] text-[#ff69b4] bg-white hover:bg-pink-50;
+  }
+
+  @keyframes floating {
+
+    0%,
+    100% {
+      transform: translateY(0) rotate(0);
+    }
+
+    50% {
+      transform: translateY(-10px) rotate(2deg);
+    }
+  }
+
+  @keyframes heartbeat {
+
+    0%,
+    100% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes ribbon-swing {
+
+    0%,
+    100% {
+      transform: rotate(-5deg);
+    }
+
+    50% {
+      transform: rotate(5deg);
+    }
+  }
+
+  .floating {
+    animation: floating 3s ease-in-out infinite;
+  }
+
+  .heartbeat {
+    animation: heartbeat 2s ease-in-out infinite;
+  }
+
+  .ribbon-swing {
+    animation: ribbon-swing 4s ease-in-out infinite;
+    transform-origin: top center;
+  }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-primary) !important;
+  font-weight: 800;
+}
+
+p,
+span,
+label,
+div {
+  color: var(--text-secondary);
+}
+
+.btn-primary {
+  background-color: #ff69b4 !important;
+  color: white !important;
+  border: none !important;
+  shadow: 0 4px 0 0 #ff3366;
+}
+
+.btn-secondary {
+  border: 2px solid #ff99cc !important;
+  color: #ff69b4 !important;
+  background-color: white !important;
 }
