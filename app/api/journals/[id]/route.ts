@@ -31,11 +31,11 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         const journal = await prisma.journal.findUnique({ where: { id: params.id } })
         if (!journal || journal.userId !== session.user.id) return NextResponse.json({ error: 'Akses ditolak' }, { status: 403 })
 
-        const { title, content, mood, isPublic, isPinLocked, tags } = await req.json()
+        const { title, content, mood, isPublic, isPinLocked, tags, coverImage } = await req.json()
 
         const updated = await prisma.journal.update({
             where: { id: params.id },
-            data: { title, content, mood, isPublic, isPinLocked, tags },
+            data: { title, content, mood, isPublic, isPinLocked, tags, coverImage },
         })
 
         return NextResponse.json(updated)

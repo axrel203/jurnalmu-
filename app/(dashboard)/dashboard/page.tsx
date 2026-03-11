@@ -8,7 +8,7 @@ import toast from 'react-hot-toast'
 import { useTheme } from '@/components/ThemeProvider'
 
 interface Journal {
-    id: string; title: string; content: string; mood: string; isPublic: boolean; isPinLocked: boolean; createdAt: string
+    id: string; title: string; content: string; mood: string; isPublic: boolean; isPinLocked: boolean; createdAt: string; coverImage?: string
 }
 
 export default function DashboardPage() {
@@ -134,12 +134,21 @@ export default function DashboardPage() {
                 ) : journals.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 text-center animate-fade-in relative">
                         {theme === 'kitty' && (
-                            <div className="mb-6 floating">
-                                <img
-                                    src="/hello_kitty_mascot.png"
-                                    alt="Hello Kitty Mascot"
-                                    className="w-32 h-32 object-contain drop-shadow-lg"
-                                />
+                            <div className="mb-6 flex gap-4 items-center justify-center">
+                                <div className="floating">
+                                    <img
+                                        src="/hello_kitty_mascot.png"
+                                        alt="Hello Kitty Mascot"
+                                        className="w-32 h-32 object-contain drop-shadow-lg"
+                                    />
+                                </div>
+                                <div className="floating-delayed">
+                                    <img
+                                        src="/hello_kitty_stickers_set_2.png"
+                                        alt="Hello Kitty Stickers"
+                                        className="w-32 h-32 object-contain drop-shadow-lg scale-110"
+                                    />
+                                </div>
                             </div>
                         )}
                         {theme !== 'kitty' && (
@@ -165,35 +174,48 @@ export default function DashboardPage() {
                                 <Link
                                     key={journal.id}
                                     href={`/journal/${journal.id}`}
-                                    className="card card-hover p-5 block group animate-slide-up"
+                                    className="card card-hover flex flex-col overflow-hidden block group animate-slide-up"
                                 >
-                                    {/* Mood + Date */}
-                                    <div className="flex items-center justify-between mb-3">
-                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${mood.bg} ${mood.color} border ${mood.border}`}>
-                                            {mood.emoji} {mood.label}
-                                        </span>
-                                        <div className="flex items-center gap-2">
-                                            {journal.isPublic && <span className="text-xs text-green-400 border border-green-400/40 rounded-md px-1.5 py-0.5">Publik</span>}
-                                            {journal.isPinLocked && <span className="text-xs">🔒</span>}
-                                            <span className="text-xs text-[var(--text-secondary)]">{formatRelative(journal.createdAt)}</span>
+                                    {/* Cover Image */}
+                                    {journal.coverImage && (
+                                        <div className="w-full aspect-video overflow-hidden border-b border-[var(--border)]">
+                                            <img
+                                                src={journal.coverImage}
+                                                alt={journal.title}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                            />
                                         </div>
-                                    </div>
+                                    )}
 
-                                    <h3 className="font-semibold text-base mb-1.5 group-hover:text-primary-400 transition-colors line-clamp-1">
-                                        {journal.title}
-                                    </h3>
-                                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed line-clamp-3">
-                                        {journal.isPinLocked ? '🔒 Entri ini dilindungi PIN' : truncate(journal.content, 150)}
-                                    </p>
+                                    <div className="p-5 flex-1 flex flex-col">
+                                        {/* Mood + Date */}
+                                        <div className="flex items-center justify-between mb-3">
+                                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${mood.bg} ${mood.color} border ${mood.border}`}>
+                                                {mood.emoji} {mood.label}
+                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                {journal.isPublic && <span className="text-xs text-green-400 border border-green-400/40 rounded-md px-1.5 py-0.5">Publik</span>}
+                                                {journal.isPinLocked && <span className="text-xs">🔒</span>}
+                                                <span className="text-xs text-[var(--text-secondary)]">{formatRelative(journal.createdAt)}</span>
+                                            </div>
+                                        </div>
 
-                                    <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--border)]">
-                                        <span className="text-xs text-[var(--text-secondary)]">{formatDate(journal.createdAt)}</span>
-                                        <button
-                                            onClick={e => handleDelete(journal.id, e)}
-                                            className="text-xs text-[var(--text-secondary)] hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
-                                        >
-                                            Hapus
-                                        </button>
+                                        <h3 className="font-semibold text-base mb-1.5 group-hover:text-primary-400 transition-colors line-clamp-1">
+                                            {journal.title}
+                                        </h3>
+                                        <p className="text-sm text-[var(--text-secondary)] leading-relaxed line-clamp-3">
+                                            {journal.isPinLocked ? '🔒 Entri ini dilindungi PIN' : truncate(journal.content, 150)}
+                                        </p>
+
+                                        <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--border)]">
+                                            <span className="text-xs text-[var(--text-secondary)]">{formatDate(journal.createdAt)}</span>
+                                            <button
+                                                onClick={e => handleDelete(journal.id, e)}
+                                                className="text-xs text-[var(--text-secondary)] hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                                            >
+                                                Hapus
+                                            </button>
+                                        </div>
                                     </div>
                                 </Link>
                             )
@@ -204,13 +226,24 @@ export default function DashboardPage() {
 
             {
                 theme === 'kitty' && (
-                    <div className="fixed bottom-6 right-6 w-24 h-24 pointer-events-none z-10 animate-fade-in floating opacity-80">
-                        <img
-                            src="/hello_kitty_mascot.png"
-                            alt="Hello Kitty Sticker"
-                            className="w-full h-full object-contain drop-shadow-xl"
-                        />
-                    </div>
+                    <>
+                        {/* Sticker 1: Mascot - Moved to bottom left */}
+                        <div className="fixed bottom-32 left-6 w-24 h-24 pointer-events-none z-10 animate-fade-in floating opacity-80">
+                            <img
+                                src="/hello_kitty_mascot.png"
+                                alt="Hello Kitty Sticker"
+                                className="w-full h-full object-contain drop-shadow-xl"
+                            />
+                        </div>
+                        {/* Sticker 2: New set - Bottom left */}
+                        <div className="fixed bottom-6 left-6 w-28 h-28 pointer-events-none z-10 animate-fade-in floating-delayed opacity-80">
+                            <img
+                                src="/hello_kitty_stickers_set_2.png"
+                                alt="New Hello Kitty Stickers"
+                                className="w-full h-full object-contain drop-shadow-xl"
+                            />
+                        </div>
+                    </>
                 )
             }
         </div >

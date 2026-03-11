@@ -9,7 +9,7 @@ import { useTheme } from '@/components/ThemeProvider'
 
 interface Journal {
     id: string; title: string; content: string; mood: string;
-    isPublic: boolean; isPinLocked: boolean; tags: string; createdAt: string; updatedAt: string
+    isPublic: boolean; isPinLocked: boolean; tags: string; createdAt: string; updatedAt: string; coverImage?: string
 }
 
 export default function JournalDetailPage() {
@@ -132,48 +132,61 @@ export default function JournalDetailPage() {
             </div>
 
             {/* Journal Content */}
-            <div className="card p-6 sm:p-8">
-                {/* Meta */}
-                <div className="flex flex-wrap items-center gap-3 mb-5">
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-sm font-semibold ${mood.bg} ${mood.color} border ${mood.border}`}>
-                        {mood.emoji} {mood.label}
-                    </span>
-                    {journal.isPublic && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium border border-green-500/40 text-green-400 bg-green-400/10">
-                            <span className="text-xs">🌍</span> Publik
-                        </span>
-                    )}
-                    {journal.isPinLocked && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium border border-amber-500/40 text-amber-400 bg-amber-400/10">
-                            <span className="text-xs">🔒</span> Terkunci PIN
-                        </span>
-                    )}
-                    <span className="ml-auto text-sm text-[var(--text-secondary)]">{formatDate(journal.createdAt)}</span>
-                </div>
-
-                <h1 className={`text-2xl sm:text-3xl font-bold mb-5 ${theme === 'kitty' ? 'text-pink-600' : ''}`}>
-                    {journal.title}
-                    {theme === 'kitty' && <span className="ml-2">💖</span>}
-                </h1>
-
-                <div className="prose prose-sm dark:prose-invert max-w-none">
-                    <p className="text-[var(--text-primary)]/90 leading-relaxed whitespace-pre-wrap text-base sm:text-lg">
-                        {journal.content}
-                    </p>
-                </div>
-
-                {journal.tags && (
-                    <div className="flex flex-wrap gap-2 mt-6 pt-5 border-t border-[var(--border)]">
-                        {journal.tags.split(',').map(tag => tag.trim()).filter(Boolean).map(tag => (
-                            <span key={tag} className="px-2.5 py-1 rounded-lg bg-primary-500/10 text-primary-400 text-xs font-medium">#{tag}</span>
-                        ))}
+            <div className="card overflow-hidden">
+                {/* Cover Image */}
+                {journal.coverImage && (
+                    <div className="w-full aspect-[21/9] overflow-hidden border-b border-[var(--border)]">
+                        <img
+                            src={journal.coverImage}
+                            alt={journal.title}
+                            className="w-full h-full object-cover"
+                        />
                     </div>
                 )}
 
-                <div className="mt-5 pt-4 border-t border-[var(--border)] flex items-center justify-between text-xs text-[var(--text-secondary)]">
-                    <span>Ditulis: {formatDate(journal.createdAt)}</span>
-                    {journal.updatedAt !== journal.createdAt && <span>Diedit: {formatDate(journal.updatedAt)}</span>}
-                    <span>{journal.content.split(/\s+/).filter(Boolean).length} kata</span>
+                <div className="p-6 sm:p-8">
+                    {/* Meta */}
+                    <div className="flex flex-wrap items-center gap-3 mb-5">
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-sm font-semibold ${mood.bg} ${mood.color} border ${mood.border}`}>
+                            {mood.emoji} {mood.label}
+                        </span>
+                        {journal.isPublic && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium border border-green-500/40 text-green-400 bg-green-400/10">
+                                <span className="text-xs">🌍</span> Publik
+                            </span>
+                        )}
+                        {journal.isPinLocked && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium border border-amber-500/40 text-amber-400 bg-amber-400/10">
+                                <span className="text-xs">🔒</span> Terkunci PIN
+                            </span>
+                        )}
+                        <span className="ml-auto text-sm text-[var(--text-secondary)]">{formatDate(journal.createdAt)}</span>
+                    </div>
+
+                    <h1 className={`text-2xl sm:text-3xl font-bold mb-5 ${theme === 'kitty' ? 'text-pink-600' : ''}`}>
+                        {journal.title}
+                        {theme === 'kitty' && <span className="ml-2">💖</span>}
+                    </h1>
+
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                        <p className="text-[var(--text-primary)]/90 leading-relaxed whitespace-pre-wrap text-base sm:text-lg">
+                            {journal.content}
+                        </p>
+                    </div>
+
+                    {journal.tags && (
+                        <div className="flex flex-wrap gap-2 mt-6 pt-5 border-t border-[var(--border)]">
+                            {journal.tags.split(',').map(tag => tag.trim()).filter(Boolean).map(tag => (
+                                <span key={tag} className="px-2.5 py-1 rounded-lg bg-primary-500/10 text-primary-400 text-xs font-medium">#{tag}</span>
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="mt-5 pt-4 border-t border-[var(--border)] flex items-center justify-between text-xs text-[var(--text-secondary)]">
+                        <span>Ditulis: {formatDate(journal.createdAt)}</span>
+                        {journal.updatedAt !== journal.createdAt && <span>Diedit: {formatDate(journal.updatedAt)}</span>}
+                        <span>{journal.content.split(/\s+/).filter(Boolean).length} kata</span>
+                    </div>
                 </div>
             </div>
 

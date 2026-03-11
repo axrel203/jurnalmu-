@@ -21,7 +21,7 @@ export async function GET() {
 
     // Streak calculation
     const sortedDates = journals.map(j => new Date(j.createdAt).toDateString())
-    const uniqueDates = [...new Set(sortedDates)]
+    const uniqueDates = Array.from(new Set(sortedDates))
     let streak = 0
     const today = new Date()
     for (let i = 0; i < 365; i++) {

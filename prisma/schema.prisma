@@ -29,7 +29,8 @@ model Journal {
   mood       String   @default("neutral")
   isPublic   Boolean  @default(false)
   isPinLocked Boolean @default(false)
-  tags       String?
+  coverImage  String?
+  tags        String?
   userId     String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())

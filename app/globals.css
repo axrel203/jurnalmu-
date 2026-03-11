@@ -172,6 +172,10 @@
     animation: floating 3s ease-in-out infinite;
   }
 
+  .floating-delayed {
+    animation: floating 3s ease-in-out infinite 1.5s;
+  }
+
   .heartbeat {
     animation: heartbeat 2s ease-in-out infinite;
   }
