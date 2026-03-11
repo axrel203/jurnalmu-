@@ -38,7 +38,7 @@ export default function StatsPage() {
                                 info.color.includes('green') ? '#4ade80' :
                                     info.color.includes('pink') ? '#ec4899' : '#9ca3af'
         return {
-            name: info.label === 'Perasaan' ? moodValue : info.label,
+            name: info.emoji,
             value: count,
             color
         }
@@ -127,7 +127,7 @@ export default function StatsPage() {
                         {moodChartData.map(m => (
                             <div key={m.name} className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
                                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color }} />
-                                {m.name}: {m.value}
+                                {m.name} {m.value}
                             </div>
                         ))}
                     </div>
