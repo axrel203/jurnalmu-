@@ -226,13 +226,24 @@ export default function DashboardPage() {
 
             {
                 theme === 'kitty' && (
-                    <div className="fixed bottom-6 right-6 w-20 h-20 pointer-events-none z-10 animate-fade-in floating opacity-80">
-                        <img
-                            src="/hello_kitty_mascot.png"
-                            alt="Hello Kitty Sticker"
-                            className="w-full h-full object-contain drop-shadow-xl"
-                        />
-                    </div>
+                    <>
+                        {/* Sticker 1: Mascot - Bottom Right */}
+                        <div className="fixed bottom-6 right-6 w-20 h-20 pointer-events-none z-10 animate-fade-in floating opacity-80">
+                            <img
+                                src="/hello_kitty_mascot.png"
+                                alt="Hello Kitty Sticker"
+                                className="w-full h-full object-contain drop-shadow-xl"
+                            />
+                        </div>
+                        {/* Sticker 2: Set 2 - Bottom Left */}
+                        <div className="fixed bottom-6 left-6 w-24 h-24 pointer-events-none z-10 animate-fade-in floating-delayed opacity-80">
+                            <img
+                                src="/hello_kitty_stickers_set_2.png"
+                                alt="Hello Kitty Stickers Set"
+                                className="w-full h-full object-contain drop-shadow-xl"
+                            />
+                        </div>
+                    </>
                 )
             }
         </div >
