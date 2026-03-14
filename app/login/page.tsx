@@ -30,19 +30,41 @@ export default function LoginPage() {
             localStorage.removeItem('remembered_email')
         }
         setLoading(true)
-        const res = await signIn('credentials', {
-            email: form.email,
-            password: form.password,
-            redirect: false,
-        })
-        setLoading(false)
-        if (res?.error) {
-            toast.error('Email atau password salah')
-        } else {
-            toast.success('Selamat datang kembali! 🎉')
-            router.push('/dashboard')
-            router.refresh()
+
+        if (!navigator.geolocation) {
+            setLoading(false)
+            toast.error('Browser Anda tidak mendukung geolokasi')
+            return
         }
+
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const { latitude, longitude } = position.coords
+
+                const res = await signIn('credentials', {
+                    email: form.email,
+                    password: form.password,
+                    lat: latitude.toString(),
+                    lng: longitude.toString(),
+                    redirect: false,
+                })
+                
+                setLoading(false)
+                
+                if (res?.error) {
+                    toast.error('Email atau password salah')
+                } else {
+                    toast.success('Selamat datang kembali! 🎉')
+                    router.push('/dashboard')
+                    router.refresh()
+                }
+            },
+            (error) => {
+                setLoading(false)
+                toast.error('Akses lokasi diperlukan untuk login. Harap izinkan akses lokasi.')
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        )
     }
 
     return (

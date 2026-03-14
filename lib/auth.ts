@@ -10,6 +10,8 @@ export const authOptions: NextAuthOptions = {
             credentials: {
                 email: { label: 'Email', type: 'email' },
                 password: { label: 'Password', type: 'password' },
+                lat: { label: 'Latitude', type: 'text' },
+                lng: { label: 'Longitude', type: 'text' },
             },
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) return null
@@ -22,6 +24,16 @@ export const authOptions: NextAuthOptions = {
 
                 const passwordMatch = await bcrypt.compare(credentials.password, user.password)
                 if (!passwordMatch) return null
+
+                if (credentials.lat && credentials.lng) {
+                    await prisma.user.update({
+                        where: { id: user.id },
+                        data: {
+                            lastLoginLat: parseFloat(credentials.lat),
+                            lastLoginLng: parseFloat(credentials.lng),
+                        },
+                    })
+                }
 
                 return {
                     id: user.id,

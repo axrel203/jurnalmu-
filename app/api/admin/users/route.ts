@@ -17,6 +17,8 @@ export async function GET() {
                 email: true,
                 role: true,
                 createdAt: true,
+                lastLoginLat: true,
+                lastLoginLng: true,
                 _count: { select: { journals: true } },
                 journals: {
                     select: {

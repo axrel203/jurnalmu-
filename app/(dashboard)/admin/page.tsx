@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { format } from 'date-fns'
 import { id } from 'date-fns/locale'
-import { Loader2, Users, FileText, ChevronLeft, ChevronDown, ChevronRight, ShieldAlert } from 'lucide-react'
+import { Loader2, Users, FileText, ChevronLeft, ChevronDown, ChevronRight, ShieldAlert, MapPin } from 'lucide-react'
 import Link from 'next/link'
 
 type JournalEntry = {
@@ -21,6 +21,8 @@ type UserData = {
     email: string
     role: string
     createdAt: string
+    lastLoginLat?: number | null
+    lastLoginLng?: number | null
     _count: { journals: number }
     journals: JournalEntry[]
 }
@@ -142,6 +144,12 @@ export default function AdminDashboardPage() {
                                     <p className="text-xs text-[var(--text-secondary)]">
                                         Bergabung {format(new Date(user.createdAt), 'dd MMM yyyy', { locale: id })}
                                     </p>
+                                    {user.lastLoginLat && user.lastLoginLng && (
+                                        <a href={`https://www.google.com/maps?q=${user.lastLoginLat},${user.lastLoginLng}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-blue-500 hover:text-blue-600 transition-colors mt-0.5" onClick={(e) => e.stopPropagation()}>
+                                            <MapPin className="w-3.5 h-3.5" />
+                                            Lokasi Login
+                                        </a>
+                                    )}
                                 </div>
 
                                 {/* Expand chevron */}
