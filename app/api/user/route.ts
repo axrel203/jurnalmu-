@@ -10,12 +10,13 @@ export async function GET() {
 
     const user = await prisma.user.findUnique({
         where: { id: session.user.id },
-        select: { name: true, email: true, pin: true }
+        select: { name: true, email: true, pin: true, pattern: true, lockType: true }
     })
 
     return NextResponse.json({
         ...user,
-        hasPin: !!user?.pin
+        hasPin: !!user?.pin,
+        hasPattern: !!user?.pattern
     })
 }
 
@@ -39,12 +40,32 @@ export async function PUT(req: Request) {
         }
 
         if (type === 'pin') {
+            const { pin } = await req.json()
             const hashedPin = pin ? await bcrypt.hash(pin, 10) : null
             await prisma.user.update({
                 where: { id: session.user.id },
                 data: { pin: hashedPin }
             })
             return NextResponse.json({ message: 'PIN diperbarui' })
+        }
+
+        if (type === 'pattern') {
+            const { pattern } = await req.json()
+            const hashedPattern = pattern ? await bcrypt.hash(pattern, 10) : null
+            await prisma.user.update({
+                where: { id: session.user.id },
+                data: { pattern: hashedPattern }
+            })
+            return NextResponse.json({ message: 'Pola diperbarui' })
+        }
+
+        if (type === 'lockType') {
+            const { lockType } = await req.json()
+            await prisma.user.update({
+                where: { id: session.user.id },
+                data: { lockType }
+            })
+            return NextResponse.json({ message: 'Tipe kunci diperbarui' })
         }
 
         if (type === 'profile' && name) {

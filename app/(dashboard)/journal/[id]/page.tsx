@@ -2,10 +2,11 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
-import { Edit2, Trash2, Globe, Lock, ChevronLeft, Share2, Loader2, Heart } from 'lucide-react'
+import { Edit2, Trash2, Globe, Lock, ChevronLeft, Share2, Loader2, Heart, RotateCcw } from 'lucide-react'
 import { getMoodInfo, formatDate } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { useTheme } from '@/components/ThemeProvider'
+import PatternLock from '@/components/PatternLock'
 
 interface Journal {
     id: string; title: string; content: string; mood: string;
@@ -22,6 +23,8 @@ export default function JournalDetailPage() {
     const [pinVerified, setPinVerified] = useState(false)
     const [verifying, setVerifying] = useState(false)
     const [deleting, setDeleting] = useState(false)
+    const [lockType, setLockType] = useState('PIN')
+    const [patternResetTrigger, setPatternResetTrigger] = useState(0)
 
     useEffect(() => {
         fetch(`/api/journals/${params.id}`)
@@ -43,21 +46,28 @@ export default function JournalDetailPage() {
         }
     }
 
-    const handleVerifyPin = async () => {
+    const handleVerifyPin = async (patternCode?: string) => {
         setVerifying(true)
+        const body = lockType === 'PATTERN' 
+            ? { pattern: patternCode } 
+            : { pin: pinInput }
+            
         const res = await fetch('/api/verify-pin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pin: pinInput }),
+            body: JSON.stringify(body),
         })
         const data = await res.json()
         setVerifying(false)
         if (data.valid) {
             setPinVerified(true)
-            toast.success('PIN benar!')
+            toast.success('Kunci terbuka!')
         } else {
-            toast.error('PIN salah')
+            toast.error(data.error || 'Kunci salah')
             setPinInput('')
+            if (lockType === 'PATTERN') {
+                setPatternResetTrigger(t => t + 1)
+            }
         }
     }
 
@@ -81,28 +91,49 @@ export default function JournalDetailPage() {
 
     const mood = getMoodInfo(journal.mood)
 
-    // PIN Lock wall
+    // Lock wall
     if (journal.isPinLocked && !pinVerified) {
         return (
             <div className="max-w-sm mx-auto mt-20 animate-slide-up">
                 <div className="card p-8 text-center">
                     <div className="text-4xl mb-4">🔒</div>
-                    <h2 className="text-xl font-bold mb-1">Dilindungi PIN</h2>
-                    <p className="text-[var(--text-secondary)] text-sm mb-6">Masukkan PIN Anda untuk membuka entri ini</p>
-                    <input
-                        type="password"
-                        inputMode="numeric"
-                        maxLength={6}
-                        className="input text-center text-2xl tracking-widest mb-4"
-                        placeholder="······"
-                        value={pinInput}
-                        onChange={e => setPinInput(e.target.value.replace(/\D/g, ''))}
-                        onKeyDown={e => e.key === 'Enter' && handleVerifyPin()}
-                    />
-                    <button className="btn-primary w-full flex items-center justify-center gap-2" onClick={handleVerifyPin} disabled={verifying || !pinInput}>
-                        {verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                        Buka Kunci
-                    </button>
+                    <h2 className="text-xl font-bold mb-1">Jurnal Terkunci</h2>
+                    <p className="text-[var(--text-secondary)] text-sm mb-6">
+                        Masukkan {lockType === 'PATTERN' ? 'Pola' : 'PIN'} untuk membuka entri ini
+                    </p>
+                    
+                    {lockType === 'PATTERN' ? (
+                        <div className="mt-4">
+                            <PatternLock 
+                                onComplete={handleVerifyPin} 
+                                resetTrigger={patternResetTrigger}
+                                size={280}
+                            />
+                            <button 
+                                onClick={() => setPatternResetTrigger(t => t + 1)} 
+                                className="mt-6 mx-auto btn-secondary flex items-center justify-center gap-2 text-sm w-full"
+                            >
+                                <RotateCcw className="w-4 h-4" /> Ulangi Gambar
+                            </button>
+                        </div>
+                    ) : (
+                        <div>
+                            <input
+                                type="password"
+                                inputMode="numeric"
+                                maxLength={6}
+                                className="input text-center text-2xl tracking-widest mb-4"
+                                placeholder="······"
+                                value={pinInput}
+                                onChange={e => setPinInput(e.target.value.replace(/\D/g, ''))}
+                                onKeyDown={e => e.key === 'Enter' && handleVerifyPin()}
+                            />
+                            <button className="btn-primary w-full flex items-center justify-center gap-2" onClick={() => handleVerifyPin()} disabled={verifying || !pinInput}>
+                                {verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                                Buka Kunci
+                            </button>
+                        </div>
+                    )}
                     <Link href="/dashboard" className="block mt-4 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)]">← Kembali</Link>
                 </div>
             </div>

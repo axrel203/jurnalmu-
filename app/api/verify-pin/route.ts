@@ -9,16 +9,23 @@ export async function POST(req: Request) {
         const session = await getServerSession(authOptions)
         if (!session) return NextResponse.json({ error: 'Belum masuk' }, { status: 401 })
 
-        const { pin } = await req.json()
+        const { pin, pattern } = await req.json()
         const user = await prisma.user.findUnique({
             where: { id: session.user.id },
-            select: { pin: true }
+            select: { pin: true, pattern: true, lockType: true }
         })
 
-        if (!user?.pin) return NextResponse.json({ valid: false, error: 'PIN belum diatur' })
-
-        const valid = await bcrypt.compare(pin, user.pin)
-        return NextResponse.json({ valid })
+        if (user?.lockType === 'PATTERN') {
+            if (!user?.pattern) return NextResponse.json({ valid: false, error: 'Pola belum diatur' })
+            if (!pattern) return NextResponse.json({ valid: false, error: 'Pola diperlukan' })
+            const valid = await bcrypt.compare(pattern, user.pattern)
+            return NextResponse.json({ valid })
+        } else {
+            if (!user?.pin) return NextResponse.json({ valid: false, error: 'PIN belum diatur' })
+            if (!pin) return NextResponse.json({ valid: false, error: 'PIN diperlukan' })
+            const valid = await bcrypt.compare(pin, user.pin)
+            return NextResponse.json({ valid })
+        }
     } catch (error) {
         return NextResponse.json({ error: 'Terjadi kesalahan' }, { status: 500 })
     }

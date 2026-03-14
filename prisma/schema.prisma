@@ -19,6 +19,8 @@ model User {
   role          String    @default("USER")
   lastLoginLat  Float?
   lastLoginLng  Float?
+  lockType      String    @default("PIN") // "PIN" or "PATTERN"
+  pattern       String?
   journals      Journal[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
