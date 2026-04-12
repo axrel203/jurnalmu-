@@ -28,10 +28,26 @@ export default function NewJournalPage() {
             return
         }
         setLoading(true)
+        
+        let lat, lng;
+        if (navigator.geolocation) {
+            try {
+                const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+                });
+                lat = position.coords.latitude;
+                lng = position.coords.longitude;
+            } catch (err) {
+                console.log("Could not get location", err)
+            }
+        }
+
+        const submitData = { ...form, lat, lng }
+
         const res = await fetch('/api/journals', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(form),
+            body: JSON.stringify(submitData),
         })
         const data = await res.json()
         setLoading(false)

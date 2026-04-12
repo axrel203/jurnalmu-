@@ -36,7 +36,7 @@ export async function POST(req: Request) {
         const session = await getServerSession(authOptions)
         if (!session) return NextResponse.json({ error: 'Belum masuk' }, { status: 401 })
 
-        const { title, content, mood, isPublic, isPinLocked, tags, coverImage } = await req.json()
+        const { title, content, mood, isPublic, isPinLocked, tags, coverImage, lat, lng } = await req.json()
 
         if (!title || !content) {
             return NextResponse.json({ error: 'Judul dan isi wajib diisi' }, { status: 400 })
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
 
         const journal = await prisma.journal.create({
             data: {
-                title, content, mood, isPublic, isPinLocked, tags, coverImage,
+                title, content, mood, isPublic, isPinLocked, tags, coverImage, lat, lng,
                 userId: session.user.id
             }
         })

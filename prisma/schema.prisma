@@ -35,6 +35,8 @@ model Journal {
   isPinLocked Boolean @default(false)
   coverImage  String?
   tags        String?
+  lat         Float?   // Added latitude
+  lng         Float?   // Added longitude
   userId     String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())

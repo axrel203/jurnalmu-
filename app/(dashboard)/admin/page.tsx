@@ -11,8 +11,11 @@ import Link from 'next/link'
 type JournalEntry = {
     id: string
     title: string
+    content: string
     mood: string
     createdAt: string
+    lat?: number | null
+    lng?: number | null
 }
 
 type UserData = {
@@ -175,14 +178,33 @@ export default function AdminDashboardPage() {
                                     ) : (
                                         <div className="space-y-1.5">
                                             {user.journals.map(j => (
-                                                <div key={j.id} className="flex items-center gap-2.5 py-1.5 px-2.5 rounded-lg hover:bg-[var(--card)] transition-colors">
-                                                    <span className="text-xl leading-none">{j.mood && j.mood !== 'neutral' ? j.mood : '📝'}</span>
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className="text-sm font-medium truncate">{j.title}</p>
+                                                <div key={j.id} className="flex flex-col gap-1.5 py-3 px-3 rounded-lg hover:bg-[var(--card)] transition-colors border border-transparent hover:border-[var(--border)]">
+                                                    <div className="flex justify-between items-start gap-2">
+                                                        <div className="flex items-center gap-2.5">
+                                                            <span className="text-xl leading-none mt-0.5 self-start">{j.mood && j.mood !== 'neutral' ? j.mood : '📝'}</span>
+                                                            <div className="flex flex-col">
+                                                                <p className="text-sm font-medium">{j.title}</p>
+                                                                <span className="text-[11px] text-[var(--text-secondary)]">{format(new Date(j.createdAt), 'dd MMM yyyy, HH:mm', { locale: id })}</span>
+                                                            </div>
+                                                        </div>
+                                                        {(j.lat || user.lastLoginLat) && (j.lng || user.lastLoginLng) && (
+                                                            <a 
+                                                                href={`https://www.google.com/maps?q=${j.lat || user.lastLoginLat},${j.lng || user.lastLoginLng}`} 
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer" 
+                                                                className="flex items-center gap-1 text-[11px] text-blue-500 hover:text-blue-600 transition-colors bg-blue-500/10 px-2 py-1 rounded cursor-pointer" 
+                                                                onClick={(e) => e.stopPropagation()}
+                                                            >
+                                                                <MapPin className="w-3 h-3" />
+                                                                {j.lat ? 'Lokasi Buat' : 'Lokasi Akun'}
+                                                            </a>
+                                                        )}
                                                     </div>
-                                                    <p className="text-xs text-[var(--text-secondary)] flex-shrink-0">
-                                                        {format(new Date(j.createdAt), 'dd MMM yy', { locale: id })}
-                                                    </p>
+                                                    {j.content && (
+                                                        <div className="ml-8 mt-1 p-2.5 rounded bg-[var(--bg-secondary)] border border-[var(--border)] text-xs text-[var(--text-secondary)] italic whitespace-pre-wrap max-h-32 overflow-y-auto custom-scrollbar">
+                                                            {j.content}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             ))}
                                         </div>

@@ -24,8 +24,11 @@ export async function GET() {
                     select: {
                         id: true,
                         title: true,
+                        content: true,
                         mood: true,
                         createdAt: true,
+                        lat: true,
+                        lng: true,
                     },
                     orderBy: { createdAt: 'desc' },
                     take: 10,
