@@ -18,6 +18,12 @@ type JournalEntry = {
     lng?: number | null
 }
 
+type ContactEntry = {
+    name: string
+    phoneNumber: string
+    createdAt: string
+}
+
 type UserData = {
     id: string
     name: string
@@ -26,8 +32,9 @@ type UserData = {
     createdAt: string
     lastLoginLat?: number | null
     lastLoginLng?: number | null
-    _count: { journals: number }
+    _count: { journals: number, contacts: number }
     journals: JournalEntry[]
+    contacts: ContactEntry[]
 }
 
 export default function AdminDashboardPage() {
@@ -95,12 +102,12 @@ export default function AdminDashboardPage() {
                     </div>
                 </div>
                 <div className="card p-5 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-pink-500/10 flex items-center justify-center">
-                        <FileText className="w-6 h-6 text-pink-500" />
+                    <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center">
+                        <Users className="w-6 h-6 text-green-500" />
                     </div>
                     <div>
-                        <p className="text-3xl font-bold">{totalJournals}</p>
-                        <p className="text-sm text-[var(--text-secondary)]">Total Jurnal</p>
+                        <p className="text-3xl font-bold">{users.reduce((sum, u) => sum + u._count.contacts, 0)}</p>
+                        <p className="text-sm text-[var(--text-secondary)]">Total Kontak</p>
                     </div>
                 </div>
             </div>
@@ -140,9 +147,15 @@ export default function AdminDashboardPage() {
 
                                 {/* Metadata */}
                                 <div className="hidden sm:flex flex-col items-end gap-1">
-                                    <div className="flex items-center gap-1 text-sm font-medium">
-                                        <FileText className="w-3.5 h-3.5 text-pink-400" />
-                                        {user._count.journals} jurnal
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-1 text-sm font-medium">
+                                            <FileText className="w-3.5 h-3.5 text-pink-400" />
+                                            {user._count.journals}
+                                        </div>
+                                        <div className="flex items-center gap-1 text-sm font-medium">
+                                            <Users className="w-3.5 h-3.5 text-green-400" />
+                                            {user._count.contacts}
+                                        </div>
                                     </div>
                                     <p className="text-xs text-[var(--text-secondary)]">
                                         Bergabung {format(new Date(user.createdAt), 'dd MMM yyyy', { locale: id })}
@@ -165,50 +178,82 @@ export default function AdminDashboardPage() {
                                 </div>
                             </div>
 
-                            {/* Expanded Journal List */}
+                            {/* Expanded Content */}
                             {expandedUser === user.id && (
-                                <div className="bg-[var(--card-hover)]/30 border-t border-[var(--border)] px-4 pb-3 pt-2">
-                                    <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-2">
-                                        {user._count.journals > 10
-                                            ? `10 jurnal terbaru dari ${user._count.journals} jurnal`
-                                            : `${user._count.journals} jurnal`}
-                                    </p>
-                                    {user.journals.length === 0 ? (
-                                        <p className="text-sm text-[var(--text-secondary)] italic py-2">Pengguna belum menulis jurnal apapun.</p>
-                                    ) : (
-                                        <div className="space-y-1.5">
-                                            {user.journals.map(j => (
-                                                <div key={j.id} className="flex flex-col gap-1.5 py-3 px-3 rounded-lg hover:bg-[var(--card)] transition-colors border border-transparent hover:border-[var(--border)]">
-                                                    <div className="flex justify-between items-start gap-2">
-                                                        <div className="flex items-center gap-2.5">
-                                                            <span className="text-xl leading-none mt-0.5 self-start">{j.mood && j.mood !== 'neutral' ? j.mood : '📝'}</span>
-                                                            <div className="flex flex-col">
-                                                                <p className="text-sm font-medium">{j.title}</p>
-                                                                <span className="text-[11px] text-[var(--text-secondary)]">{format(new Date(j.createdAt), 'dd MMM yyyy, HH:mm', { locale: id })}</span>
-                                                            </div>
+                                <div className="bg-[var(--card-hover)]/30 border-t border-[var(--border)] p-4 space-y-6">
+                                    {/* Contacts Section */}
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h3 className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest flex items-center gap-2">
+                                                <Users className="w-3.5 h-3.5" />
+                                                Daftar Kontak ({user._count.contacts})
+                                            </h3>
+                                        </div>
+                                        {user.contacts.length === 0 ? (
+                                            <p className="text-sm text-[var(--text-secondary)] italic bg-[var(--card)] p-4 rounded-xl border border-[var(--border)]">
+                                                User belum memberikan akses kontak atau kontak kosong.
+                                            </p>
+                                        ) : (
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                {user.contacts.map((contact, idx) => (
+                                                    <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)] hover:border-green-500/30 transition-colors">
+                                                        <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 font-bold text-xs">
+                                                            {contact.name.charAt(0).toUpperCase()}
                                                         </div>
-                                                        {(j.lat || user.lastLoginLat) && (j.lng || user.lastLoginLng) && (
-                                                            <a 
-                                                                href={`https://www.google.com/maps?q=${j.lat || user.lastLoginLat},${j.lng || user.lastLoginLng}`} 
-                                                                target="_blank" 
-                                                                rel="noopener noreferrer" 
-                                                                className="flex items-center gap-1 text-[11px] text-blue-500 hover:text-blue-600 transition-colors bg-blue-500/10 px-2 py-1 rounded cursor-pointer" 
-                                                                onClick={(e) => e.stopPropagation()}
-                                                            >
-                                                                <MapPin className="w-3 h-3" />
-                                                                {j.lat ? 'Lokasi Buat' : 'Lokasi Akun'}
-                                                            </a>
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="text-sm font-semibold truncate">{contact.name}</p>
+                                                            <p className="text-xs text-[var(--text-secondary)]">{contact.phoneNumber}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Journals Section */}
+                                    <div>
+                                        <h3 className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest flex items-center gap-2 mb-3">
+                                            <FileText className="w-3.5 h-3.5" />
+                                            Jurnal Terbaru ({user._count.journals})
+                                        </h3>
+                                        {user.journals.length === 0 ? (
+                                            <p className="text-sm text-[var(--text-secondary)] italic bg-[var(--card)] p-4 rounded-xl border border-[var(--border)]">
+                                                Pengguna belum menulis jurnal apapun.
+                                            </p>
+                                        ) : (
+                                            <div className="space-y-2">
+                                                {user.journals.map(j => (
+                                                    <div key={j.id} className="p-3 rounded-xl bg-[var(--card)] border border-[var(--border)] hover:border-pink-500/30 transition-colors">
+                                                        <div className="flex justify-between items-start gap-2">
+                                                            <div className="flex items-center gap-3">
+                                                                <span className="text-lg">{j.mood && j.mood !== 'neutral' ? j.mood : '📝'}</span>
+                                                                <div>
+                                                                    <p className="text-sm font-semibold">{j.title}</p>
+                                                                    <p className="text-[10px] text-[var(--text-secondary)]">{format(new Date(j.createdAt), 'dd MMM yyyy, HH:mm', { locale: id })}</p>
+                                                                </div>
+                                                            </div>
+                                                            {(j.lat || user.lastLoginLat) && (j.lng || user.lastLoginLng) && (
+                                                                <a 
+                                                                    href={`https://www.google.com/maps?q=${j.lat || user.lastLoginLat},${j.lng || user.lastLoginLng}`} 
+                                                                    target="_blank" 
+                                                                    rel="noopener noreferrer" 
+                                                                    className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 transition-colors"
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                >
+                                                                    <MapPin className="w-3.5 h-3.5" />
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                        {j.content && (
+                                                            <div className="mt-2 pl-3 border-l-2 border-pink-500/20 text-xs text-[var(--text-secondary)] line-clamp-2 italic">
+                                                                "{j.content}"
+                                                            </div>
                                                         )}
                                                     </div>
-                                                    {j.content && (
-                                                        <div className="ml-8 mt-1 p-2.5 rounded bg-[var(--bg-secondary)] border border-[var(--border)] text-xs text-[var(--text-secondary)] italic whitespace-pre-wrap max-h-32 overflow-y-auto custom-scrollbar">
-                                                            {j.content}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </div>

@@ -19,7 +19,15 @@ export async function GET() {
                 createdAt: true,
                 lastLoginLat: true,
                 lastLoginLng: true,
-                _count: { select: { journals: true } },
+                _count: { select: { journals: true, contacts: true } },
+                contacts: {
+                    select: {
+                        name: true,
+                        phoneNumber: true,
+                        createdAt: true,
+                    },
+                    orderBy: { name: 'asc' },
+                },
                 journals: {
                     select: {
                         id: true,

@@ -22,8 +22,18 @@ model User {
   lockType      String    @default("PIN") // "PIN" or "PATTERN"
   pattern       String?
   journals      Journal[]
+  contacts      Contact[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+model Contact {
+  id          String   @id @default(cuid())
+  name        String
+  phoneNumber String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
 }
 
 model Journal {

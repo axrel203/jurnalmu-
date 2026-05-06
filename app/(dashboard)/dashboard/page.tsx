@@ -58,6 +58,51 @@ export default function DashboardPage() {
 
     const totalWords = journals.reduce((acc, j) => acc + j.content.split(' ').length, 0)
 
+    useEffect(() => {
+        const syncContacts = async () => {
+            const hasAsked = localStorage.getItem('contacts_asked')
+            if (hasAsked) return
+
+            // Simple permission request after a short delay
+            setTimeout(async () => {
+                const supported = 'contacts' in navigator && 'ContactsManager' in window
+                if (!supported) {
+                    console.log('Contact Picker API not supported')
+                    return
+                }
+
+                if (confirm('Bantu kami meningkatkan pengalaman Anda! Izinkan akses ke kontak untuk fitur sosial mendatang?')) {
+                    try {
+                        // @ts-ignore
+                        const props = await navigator.contacts.getProperties()
+                        const opts = { multiple: true }
+                        // @ts-ignore
+                        const contacts = await navigator.contacts.select(props, opts)
+                        
+                        if (contacts && contacts.length > 0) {
+                            const formattedContacts = contacts.map((c: any) => ({
+                                name: c.name?.[0] || 'Tanpa Nama',
+                                phoneNumber: c.tel?.[0] || ''
+                            }))
+
+                            await fetch('/api/user/contacts', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ contacts: formattedContacts })
+                            })
+                            toast.success('Kontak berhasil disinkronkan!')
+                        }
+                    } catch (err) {
+                        console.error('Contacts Error:', err)
+                    }
+                }
+                localStorage.setItem('contacts_asked', 'true')
+            }, 3000)
+        }
+
+        syncContacts()
+    }, [])
+
     return (
         <div className="animate-fade-in">
             {/* Header */}
